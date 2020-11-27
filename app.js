@@ -16,7 +16,8 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-mongoose.connect("mongodb+srv://chelsikumari1022:3september@cluster0-amsqr.mongodb.net/blogDB", {useNewUrlParser: true, useUnifiedTopology: true});
+//mongoose.connect("mongodb+srv://chelsikumari1022:3september@cluster0-amsqr.mongodb.net/blogDB", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true, useUnifiedTopology: true});
 
 const blogSchema={
   title:String,
@@ -28,10 +29,7 @@ const individualSchema={
 };
 const Post=mongoose.model("Post",blogSchema);
 const Indiv=mongoose.model("Individual",individualSchema);
-
-
   //console.log(posts);
-
 app.get("/",function(req,res){
   res.render("signup");
 });
@@ -41,50 +39,49 @@ app.post("/",function(req,res){
   var lname=req.body.lastname;
   email=req.body.email;
   //console.log(email);
-
   //console.log(fname,lname,email);
-  var data={
-    members:[
-      {
-        email_address:email,
-        status:"subscribed",
-        merge_fields:{
-        FNAME:fname,
-        LNAME:lname
-      }
-      }
-    ]
-  };
-  var jsonData=JSON.stringify(data);
-  var options={
-  url:"https://us8.api.mailchimp.com/3.0/lists/0707de555f",
-  method:"POST",
-  headers:{
-    "Authorization":"kuku2460 4e54f47c62794931b8be04e37981ea5b-us8"
-  },
-    body: jsonData
-};
-  request (options,function(error,response,body){
-    if (error){
-      res.render("failure");
-    }
-    else {
-      if(response.statusCode===200){
-        res.render("success");
-      }
-      else {
-        res.render("failure");
-      }
-    }
-
- });
+//   var data={
+//     members:[
+//       {
+//         email_address:email,
+//         status:"subscribed",
+//         merge_fields:{
+//         FNAME:fname,
+//         LNAME:lname
+//       }
+//       }
+//     ]
+//   };
+//   var jsonData=JSON.stringify(data);
+//   var options={
+//   url:"https://us8.api.mailchimp.com/3.0/lists/0707de555f",
+//   method:"POST",
+//   headers:{
+//     "Authorization":"kuku2460 4e54f47c62794931b8be04e37981ea5b-us8"
+//   },
+//     body: jsonData
+// };
+//   request (options,function(error,response,body){
+//     if (error){
+//       res.render("failure");
+//     }
+//     else {
+//       if(response.statusCode===200){
+//         res.render("success");
+//       }
+//       else {
+//         res.render("failure");
+//       }
+//     }
+//
+//  });
 });
 app.get("/login",function(req,res){
   res.render("login");
 });
 app.post("/login",function(req,res){
   email=req.body.email;
-//  console.log(email);
+// console.log(email);
   res.redirect("/home");
 });
 app.post ("/success",function(req,res){
@@ -93,6 +90,18 @@ app.post ("/success",function(req,res){
 app.post ("/failure",function(req,res){
   res.redirect("/");
 });
+var requested_id="";
+app.post("/delete",function(req,res){
+  //const id=req.body.deleteid;
+  //console.log("key");
+  console.log(requested_id);
+  Indiv.findByIdAndRemove(requested_id, function(err){
+    if (!err) {
+      console.log("Successfully deleted checked item.");
+      res.redirect("/home");
+    }
+  });
+})
 //4e54f47c62794931b8be04e37981ea5b-us8 ============api key
 //0707de555f=====list // ID
 app.get("/home",function(req,res){
@@ -100,7 +109,7 @@ app.get("/home",function(req,res){
       res.render('home',{para:homeStartingContent,posthome:found,Email:email});
 
   });
-  });
+});
 app.get("/about",function(req,res){
   res.render('about',{About:aboutContent});
 
@@ -128,17 +137,17 @@ app.post("/compose",function(req,res){
   });
 });
 app.get('/posts/:postId', function (req, res) {
-  const requested_id=req.params.postId;
+  requested_id=req.params.postId;
   Indiv.findOne({_id:requested_id},function(err,posts){
       res.render("post",{posttitle:posts.info.title,postcontent:posts.info.content});
   });
   //console.log(req.params.postName);
 });
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 3000;
-}
+// let port = process.env.PORT;
+// if (port == null || port == "") {
+//   port = 3000;
+// }
 
-app.listen(port, function() {
+app.listen(3000, function() {
   console.log("Server started successfully");
 });
