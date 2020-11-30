@@ -1,12 +1,12 @@
 <%-include("partials/header");-%>
 <h1> <%=posttitle%></h1>
 <p><%=postcontent%></p>
+
+
 <form class="" action="/delete" method="post">
   <!-- <input type="hidden" name="deleteid" value="<%= posttitle._id %>"></input> -->
-<button class="btn btn-lg btn-primary" type="submit">Delete post</button>
+  <a href="/update" class="btn btn-sm btn-primary line" >Edit</a>
+<button class="btn btn-sm btn-primary line" type="submit">Delete post</button>
 </form>
-<form class="" action="/update" method="post">
-  <!-- <input type="hidden" name="deleteid" value="<%= posttitle._id %>"></input> -->
-<button class="btn btn-lg btn-primary" type="submit">Update post</button>
-</form>
+
 <%-include("partials/footer");-%>

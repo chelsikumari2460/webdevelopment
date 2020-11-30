@@ -107,7 +107,6 @@ app.post("/delete",function(req,res){
 app.get("/home",function(req,res){
   Indiv.find({E_mail:email},function(err,found){
       res.render('home',{para:homeStartingContent,posthome:found,Email:email});
-
   });
 });
 app.get("/about",function(req,res){
@@ -119,8 +118,24 @@ app.get ("/contact",function(req,res){
 });
 app.get("/compose",function(req,res){
   res.render("compose",{Email:email});
-})
-
+});
+app.get("/update",function(req,res){
+  Indiv.findOne({_id:requested_id},function(err,posts){
+      res.render("update",{Email:email,posttitle:posts.info.title,postcontent:posts.info.content});
+    });
+});
+app.post("/update",function(req,res){
+  const post=new Post({
+    title:req.body.posttitle,
+    content:req.body.postbody
+  });
+  Indiv.updateOne({_id:requested_id},{info:post},function(err){
+  //  if (!err){
+      res.redirect("/home");
+      console.log("Sucessfully updated");
+  //  }
+  });
+});
 app.post("/compose",function(req,res){
   const post=new Post({
     title:req.body.posttitle,
